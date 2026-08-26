@@ -1,6 +1,6 @@
 # AI Career Assistant
 
-An end-to-end, RAG-backed web application designed to automate and optimize the job application process. Built with Python, this tool leverages local vector databases, advanced layout detection, and Google's Gemini 2.0 Flash to parse technical resumes, generate targeted cover letters, and provide actionable career advice.
+An end-to-end, RAG-backed web application designed to automate and optimize the job application process. Built with Python, this tool leverages local vector databases, advanced layout detection, and Google's Gemini 3.6 Flash to parse technical resumes, generate targeted cover letters, and provide actionable career advice.
 
 ## System Architecture & Tech Stack
 
