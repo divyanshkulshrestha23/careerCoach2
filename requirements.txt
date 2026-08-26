@@ -1,5 +1,5 @@
 # --- User Interface ---
-gradio
+gradio==4.*
 
 # --- LLM Frameworks & APIs ---
 google-genai
