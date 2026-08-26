@@ -1,0 +1,23 @@
+# --- User Interface ---
+gradio
+
+# --- LLM Frameworks & APIs ---
+google-genai
+langchain-core
+langchain-google-genai
+dotenv
+
+# --- Computer Vision & OCR ---
+torch
+ultralytics
+opencv-python
+pytesseract
+pdf2image
+Pillow
+
+# --- Vector Database ---
+chromadb
+
+# --- Web Scraping & Utilities ---
+trafilatura
+huggingface_hub
