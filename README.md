@@ -21,7 +21,7 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 ## Quick Start Installation
 
 1. **Clone the repository:**
-   `git clone https://github.com/yourusername/ai-career-assistant.git`
+   `git clone https://github.com/yourusername/careerCoach2.git`
 2. **Install system dependencies:**
    * Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) and add it to your system PATH.
    * Install [Poppler](https://poppler.freedesktop.org/) (required for `pdf2image`).
