@@ -14,7 +14,8 @@ SKILLS = [
     # Frameworks and libraries
     "react", "next.js", "angular", "vue", "node.js", "django", "flask", "fastapi", "spring boot", "express",
     "pandas", "numpy", "scikit-learn", "pytorch", "tensorflow", "keras", "langchain", "spark",
-    "pyspark", "hadoop", "kafka", "airflow", "dbt", "gradio", "streamlit", "langgraph", "vllm",
+    "pyspark", "hadoop", "kafka", "airflow", "dbt", "gradio", "streamlit", "langgraph", "langchain",
+    "vllm", "chromadb", "protobuf",
     # Data and storage
     "postgresql", "mysql", "mongodb", "redis", "elasticsearch", "chromadb", "snowflake",
     "bigquery", "data warehouse", "etl", "data pipeline",
@@ -28,7 +29,7 @@ SKILLS = [
     "machine learning", "deep learning", "natural language processing", "computer vision",
     "statistics", "data analysis", "data visualization", "a/b testing", "feature engineering",
     "model deployment", "mlops", "llm", "retrieval augmented generation", "prompt engineering",
-    "ocr", "object detection",
+    "ocr", "object detection", "computer vision",
 ]
 
 # Common alternative spellings mapped to a canonical skill.
@@ -42,11 +43,19 @@ ALIASES = {
     "amazon web services": "aws",
     "ml": "machine learning",
     "nlp": "natural language processing",
+    "gemini": "llm",
+    "gemini api": "llm",
+    "protobufs": "protobuf",
+    "protocol buffers": "protobuf",
+    "lang chain": "langchain",
     "rag": "retrieval augmented generation",
     "cicd": "ci/cd",
     "ci cd": "ci/cd",
     "sklearn": "scikit-learn",
 }
+
+# Below this many recognised skills in a job, the overlap is too noisy to show as a score.
+MIN_JOB_SKILLS = 5
 
 _PATTERN_CACHE: list[tuple[re.Pattern, str]] = []
 
@@ -79,8 +88,9 @@ def match_resume(resume_text: str, job_text: str) -> dict:
     job_skills = extract_skills(job_text)
     resume_skills = extract_skills(resume_text)
 
-    if not job_skills:
-        return {"score": None, "job_skills": [], "matched": [], "missing": []}
+    if len(job_skills) < MIN_JOB_SKILLS:
+        return {"score": None, "job_skills": sorted(job_skills), "matched": [], "missing": [],
+                "reason": "too_few_skills"}
 
     matched = sorted(job_skills & resume_skills)
     missing = sorted(job_skills - resume_skills)
@@ -90,6 +100,10 @@ def match_resume(resume_text: str, job_text: str) -> dict:
 
 def format_report(result: dict) -> str:
     """Plain-text report for the app."""
+    if result["score"] is None and result["job_skills"]:
+        return (f"The job description names only {len(result['job_skills'])} recognised skills. "
+                f"A score needs at least {MIN_JOB_SKILLS}, because fewer skills make the percentage unstable. "
+                "Paste a fuller job description.")
     if result["score"] is None:
         return ("No recognised skills were found in the job description, so no score was computed. "
                 "Paste a fuller job description, or check that the listed skills are in SKILLS in scoring.py.")

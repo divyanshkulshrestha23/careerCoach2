@@ -3,6 +3,7 @@ import trafilatura
 from processor import resume_polish, cover_letter, career_coach, extract_text_from_pdf
 from filestore import store_resume_chunks, get_stored_resume_text
 from scoring import match_resume, format_report
+from semantic import coverage, default_embedder
 
 
 def fetch_job_context(input_string):
@@ -48,7 +49,18 @@ def resume_match_wrapper(desc, res):
     resume_text = res.strip() or get_stored_resume_text()
     if not resume_text:
         return "Upload a resume in Tab 1, or paste your resume text here, then try again."
-    return format_report(match_resume(resume_text, actual_desc))
+    report = format_report(match_resume(resume_text, actual_desc))
+    try:
+        sem = coverage(resume_text, actual_desc, default_embedder())
+        if sem["coverage"] is None:
+            semantic_line = "Semantic coverage: not enough text to compare."
+        else:
+            gaps = "; ".join(item["job_sentence"] for item in sem["weakest"])
+            semantic_line = (f"Semantic coverage (separate from the score): {sem['coverage']:.2f}. "
+                             f"Least-covered job sentences: {gaps}")
+    except Exception:
+        semantic_line = "Semantic coverage: unavailable (the embedding model could not be loaded)."
+    return report + "\n\n" + semantic_line
 
 
 custom_theme = gr.themes.Soft(

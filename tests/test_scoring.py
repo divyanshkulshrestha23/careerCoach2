@@ -23,16 +23,17 @@ def test_aliases_map_to_canonical_skill():
 
 def test_score_is_share_of_job_skills_found():
     result = match_resume(
-        resume_text="Python, Docker and SQL",
-        job_text="Requires Python, Docker, Kubernetes and AWS",
+        resume_text="Python, Docker, SQL and Linux",
+        job_text="Requires Python, Docker, Kubernetes, AWS, SQL and Terraform",
     )
     assert result["score"] == 50
-    assert result["matched"] == ["docker", "python"]
-    assert result["missing"] == ["aws", "kubernetes"]
+    assert result["matched"] == ["docker", "python", "sql"]
+    assert result["missing"] == ["aws", "kubernetes", "terraform"]
 
 
 def test_full_match_scores_100():
-    result = match_resume("Python and SQL", "Need Python and SQL")
+    result = match_resume("Python, SQL, Docker, AWS and Kubernetes",
+                          "Need Python, SQL, Docker, AWS and Kubernetes")
     assert result["score"] == 100
     assert result["missing"] == []
 
@@ -41,10 +42,12 @@ def test_no_recognised_skills_gives_no_score():
     result = match_resume("Python developer", "Looking for a barista")
     assert result["score"] is None
     assert "no score was computed" in format_report(result)
+    assert result["job_skills"] == []
 
 
 def test_skill_match_is_case_insensitive_on_resume_side():
-    result = match_resume("Built APIs in PYTHON", "Need python")
+    result = match_resume("Built APIs in PYTHON, Docker, SQL, AWS and Kubernetes",
+                          "Need python, docker, sql, aws and kubernetes")
     assert result["score"] == 100
 
 
