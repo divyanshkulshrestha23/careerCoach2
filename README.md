@@ -13,11 +13,11 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 
 ## Key Features
 
-* **Intelligent Document Parsing:** Utilizes a custom YOLO model to segment PDF resumes into logical blocks (Education, Experience, Skills) before extracting text via Tesseract OCR.
+* **Intelligent Document Parsing:** A YOLO layout model splits PDF resume pages into blocks, and Tesseract OCR reads the text in each block.
 * **Retrieval-Augmented Generation (RAG):** Parses and embeds resume chunks into a local ChromaDB instance, allowing the system to query only the most relevant bullet points for specific job descriptions.
 * **Automated URL Scraping:** Users can paste a job posting URL directly into the app; Trafilatura instantly scrapes and cleans the target text.
 * **Resume Match Score:** Compares a job description with your resume using a built-in list of skills. It reports a 0–100 score, the skills found, and the skills missing. It runs locally, with no LLM call.
-* **One-Click Polishing:** Employs the X-Y-Z action formula to rewrite raw resume bullet points into highly quantifiable, Big-Tech-optimized statements.
+* **Resume Polishing:** Gemini rewrites resume content for a target position, asking for quantifiable impact.
 
 ## Quick Start Installation
 
@@ -38,7 +38,7 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 
 ## Usage
 
-Navigate to the local Gradio URL (typically `http://127.0.0.1:7860`). Upload your PDF resume in the **Resume Polisher** tab to automatically populate the local vector database, then freely generate custom cover letters and gap analyses in the subsequent tabs.
+Navigate to the local Gradio URL (typically `http://127.0.0.1:7860`). Upload your PDF resume in the **Resume Polisher** tab to automatically populate the local vector database. The **Cover Letter Generator** and **Career Advisor** tabs then use the stored resume. The **Resume Match** tab scores a job description against your resume without calling an LLM.
 
 ## How the match score works
 
@@ -51,4 +51,4 @@ pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-The tests cover the helpers that choose resume context and read LLM responses. They don't call Gemini or run OCR.
+The tests cover the resume-context helpers, the LLM response helpers, the skill-match score, and the semantic coverage check. They don't call Gemini or run OCR. The semantic tests use a stand-in embedder, so they don't download the embedding model.
