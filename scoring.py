@@ -9,20 +9,21 @@ import re
 # Canonical skill names. Phrases are matched as whole words, so "rest api" will not match "restaurant".
 SKILLS = [
     # Languages
-    "python", "java", "javascript", "typescript", "c++", "c#", "kotlin", "swift", "rust", "scala",
+    "python", "java", "javascript", "typescript", "golang", "c++", "c#", "kotlin", "swift", "rust", "scala",
     "sql", "bash", "html", "css",
     # Frameworks and libraries
-    "react", "angular", "vue", "node.js", "django", "flask", "fastapi", "spring boot", "express",
+    "react", "next.js", "angular", "vue", "node.js", "django", "flask", "fastapi", "spring boot", "express",
     "pandas", "numpy", "scikit-learn", "pytorch", "tensorflow", "keras", "langchain", "spark",
-    "pyspark", "hadoop", "kafka", "airflow", "dbt", "gradio", "streamlit",
+    "pyspark", "hadoop", "kafka", "airflow", "dbt", "gradio", "streamlit", "langgraph", "vllm",
     # Data and storage
     "postgresql", "mysql", "mongodb", "redis", "elasticsearch", "chromadb", "snowflake",
     "bigquery", "data warehouse", "etl", "data pipeline",
     # Cloud and infrastructure
     "aws", "azure", "gcp", "docker", "kubernetes", "terraform", "ansible", "linux",
-    "ci/cd", "github actions", "jenkins", "serverless", "cloud run", "lambda",
+    "ci/cd", "github actions", "jenkins", "serverless", "cloud run", "lambda", "dynamodb", "sagemaker", "vertex ai",
     # Practices and concepts
-    "rest api", "graphql", "microservices", "git", "unit testing", "test driven development",
+    "rest api", "graphql", "grpc", "oauth", "jwt", "microservices", "git", "unit testing",
+    "test driven development", "grafana", "opentelemetry", "temporal",
     "agile", "scrum", "system design", "data structures", "algorithms", "distributed systems",
     "machine learning", "deep learning", "natural language processing", "computer vision",
     "statistics", "data analysis", "data visualization", "a/b testing", "feature engineering",
@@ -32,7 +33,6 @@ SKILLS = [
 
 # Common alternative spellings mapped to a canonical skill.
 ALIASES = {
-    "js": "javascript",
     "ts": "typescript",
     "nodejs": "node.js",
     "node": "node.js",
@@ -41,6 +41,7 @@ ALIASES = {
     "google cloud": "gcp",
     "amazon web services": "aws",
     "ml": "machine learning",
+    "nlp": "natural language processing",
     "rag": "retrieval augmented generation",
     "cicd": "ci/cd",
     "ci cd": "ci/cd",

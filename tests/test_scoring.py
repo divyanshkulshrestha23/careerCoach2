@@ -46,3 +46,17 @@ def test_no_recognised_skills_gives_no_score():
 def test_skill_match_is_case_insensitive_on_resume_side():
     result = match_resume("Built APIs in PYTHON", "Need python")
     assert result["score"] == 100
+
+
+def test_node_js_does_not_count_as_javascript():
+    skills = extract_skills("Lambda functions in Node.js and Python")
+    assert "node.js" in skills
+    assert "javascript" not in skills
+
+
+def test_next_js_is_recognised():
+    assert "next.js" in extract_skills("Built the UI in Next.js")
+
+
+def test_common_word_go_is_not_golang():
+    assert "golang" not in extract_skills("We go to market in Q3")
