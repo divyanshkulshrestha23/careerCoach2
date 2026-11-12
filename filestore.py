@@ -61,3 +61,11 @@ def query_relevant_experience(job_description_text, n_results=2):
         return matched_chunks
 
     return ""
+
+
+def get_stored_resume_text() -> str:
+    """Return all stored resume sections as one string, or "" if nothing is stored."""
+    if resume_collection.count() == 0:
+        return ""
+    stored = resume_collection.get()
+    return "\n\n".join(doc for doc in stored["documents"] if doc)

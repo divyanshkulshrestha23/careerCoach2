@@ -1,7 +1,8 @@
 import gradio as gr
 import trafilatura
 from processor import resume_polish, cover_letter, career_coach, extract_text_from_pdf
-from filestore import store_resume_chunks
+from filestore import store_resume_chunks, get_stored_resume_text
+from scoring import match_resume, format_report
 
 
 def fetch_job_context(input_string):
@@ -40,6 +41,14 @@ def generate_cover_letter_wrapper(comp, pos, desc, res):
 def career_coach_wrapper(desc, res, pos):
     actual_desc = fetch_job_context(desc)
     return career_coach(actual_desc, res, pos)
+
+
+def resume_match_wrapper(desc, res):
+    actual_desc = fetch_job_context(desc)
+    resume_text = res.strip() or get_stored_resume_text()
+    if not resume_text:
+        return "Upload a resume in Tab 1, or paste your resume text here, then try again."
+    return format_report(match_resume(resume_text, actual_desc))
 
 
 custom_theme = gr.themes.Soft(
@@ -110,6 +119,20 @@ with gr.Blocks(title="AI Career Assistant") as app:
                 advice_out = gr.Textbox(label="Advice", lines=15)
 
         advice_btn.click(fn=career_coach_wrapper, inputs=[a_desc_in, a_res_in, a_pos_in], outputs=[advice_out])
+
+    # --- TAB 4: Skill match score (local, no LLM) ---
+    with gr.Tab("4. Resume Match"):
+        with gr.Row():
+            with gr.Column():
+                m_desc_in = gr.Textbox(label="Job Description",
+                                       placeholder="Paste the job description or a URL here...", lines=5)
+                m_res_in = gr.Textbox(label="Manual Resume Input (Optional)",
+                                      placeholder="Leave blank to use the PDF you uploaded in Tab 1...", lines=3)
+                match_btn = gr.Button("Check Skill Match")
+            with gr.Column():
+                match_out = gr.Textbox(label="Match Report", lines=12)
+
+        match_btn.click(fn=resume_match_wrapper, inputs=[m_desc_in, m_res_in], outputs=[match_out])
 
 if __name__ == "__main__":
     app.launch(

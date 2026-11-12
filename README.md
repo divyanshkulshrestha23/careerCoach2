@@ -16,6 +16,7 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 * **Intelligent Document Parsing:** Utilizes a custom YOLO model to segment PDF resumes into logical blocks (Education, Experience, Skills) before extracting text via Tesseract OCR.
 * **Retrieval-Augmented Generation (RAG):** Parses and embeds resume chunks into a local ChromaDB instance, allowing the system to query only the most relevant bullet points for specific job descriptions.
 * **Automated URL Scraping:** Users can paste a job posting URL directly into the app; Trafilatura instantly scrapes and cleans the target text.
+* **Resume Match Score:** Compares a job description with your resume using a built-in list of skills. It reports a 0–100 score, the skills found, and the skills missing. It runs locally, with no LLM call.
 * **One-Click Polishing:** Employs the X-Y-Z action formula to rewrite raw resume bullet points into highly quantifiable, Big-Tech-optimized statements.
 
 ## Quick Start Installation
@@ -38,6 +39,10 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 ## Usage
 
 Navigate to the local Gradio URL (typically `http://127.0.0.1:7860`). Upload your PDF resume in the **Resume Polisher** tab to automatically populate the local vector database, then freely generate custom cover letters and gap analyses in the subsequent tabs.
+
+## How the match score works
+
+The score is the share of recognised skills in the job description that also appear in your resume. Skills come from the `SKILLS` list in `scoring.py`, so a skill missing from that list is never counted. The score doesn't measure seniority, years of experience, or how deep a skill goes. Add skills to the list to improve coverage.
 
 ## Tests
 
