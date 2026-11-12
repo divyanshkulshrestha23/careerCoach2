@@ -1,6 +1,6 @@
 # AI Career Assistant
 
-An end-to-end, RAG-backed web application designed to automate and optimize the job application process. Built with Python, this tool leverages local vector databases, advanced layout detection, and Google's Gemini 3.6 Flash to parse technical resumes, generate targeted cover letters, and provide actionable career advice.
+An end-to-end, RAG-backed web application designed to automate and optimize the job application process. Built with Python, this tool leverages local vector databases, advanced layout detection, and Google Gemini to parse technical resumes, generate targeted cover letters, and provide actionable career advice.
 
 ## System Architecture & Tech Stack
 
@@ -8,7 +8,7 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 * **Frontend:** Gradio (Responsive Web UI)
 * **Computer Vision / OCR:** YOLO (Document Layout Detection) & Tesseract OCR
 * **Vector Database (RAG):** ChromaDB (Local persistent storage)
-* **LLM Engine:** Google Gemini 2.0 Flash (`google-genai` SDK)
+* **LLM Engine:** Google Gemini via LangChain (`langchain-google-genai`). The default model is `gemini-3.6-flash`; set `GEMINI_MODEL` to change it.
 * **Web Scraping:** Trafilatura (Automated job description extraction)
 
 ## Key Features
@@ -21,18 +21,29 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 ## Quick Start Installation
 
 1. **Clone the repository:**
-   `git clone https://github.com/yourusername/careerCoach2.git`
+   `git clone https://github.com/divyanshkulshrestha23/careerCoach2.git`
 2. **Install system dependencies:**
    * Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) and add it to your system PATH.
    * Install [Poppler](https://poppler.freedesktop.org/) (required for `pdf2image`).
+   * If either program is not on your PATH, set `TESSERACT_CMD` (path to `tesseract` or `tesseract.exe`) and `POPPLER_PATH` (folder containing `pdftoppm`) instead.
 3. **Install Python dependencies:**
    `pip install -r requirements.txt`
 4. **Configure Environment Variables:**
    Create a `.env` file in the root directory and add your Google API key:
    `GEMINI_API_KEY=your_api_key_here`
+   Optional: `GEMINI_MODEL`, `TESSERACT_CMD`, `POPPLER_PATH`.
 5. **Run the application:**
    `python app.py`
 
 ## Usage
 
 Navigate to the local Gradio URL (typically `http://127.0.0.1:7860`). Upload your PDF resume in the **Resume Polisher** tab to automatically populate the local vector database, then freely generate custom cover letters and gap analyses in the subsequent tabs.
+
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+The tests cover the helpers that choose resume context and read LLM responses. They don't call Gemini or run OCR.

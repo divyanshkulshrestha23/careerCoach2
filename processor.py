@@ -2,6 +2,7 @@ import os
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from filestore import query_relevant_experience  # Import the RAG query function
+from helpers import choose_context, response_text
 import cv2
 import pytesseract
 from pdf2image import convert_from_path
@@ -11,12 +12,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Users\Divyansh\AppData\Local\Tesseract-OCR\tesseract.exe'
+# Optional: set TESSERACT_CMD to the tesseract executable if it is not on PATH.
+if os.environ.get("TESSERACT_CMD"):
+    pytesseract.pytesseract.tesseract_cmd = os.environ["TESSERACT_CMD"]
 
 
 def extract_text_from_pdf(pdf_path):
     """Parses PDF resumes using YOLO layout detection and Tesseract OCR."""
-    images = convert_from_path(pdf_path, poppler_path=r"C:\Users\Divyansh\AppData\Local\poppler\Library\bin")
+    # POPPLER_PATH is the folder containing pdftoppm; None means use the system PATH.
+    images = convert_from_path(pdf_path, poppler_path=os.environ.get("POPPLER_PATH"))
     model_path = hf_hub_download(repo_id="Armaggheddon/yolo26-document-layout", filename="yolo26n_doc_layout.pt")
     model = YOLO(model_path)
 
@@ -48,7 +52,8 @@ def extract_text_from_pdf(pdf_path):
 #######------------- LLM -------------####
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-llm = ChatGoogleGenerativeAI(model="gemini-3.6-flash", google_api_key=GEMINI_API_KEY)
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+llm = ChatGoogleGenerativeAI(model=GEMINI_MODEL, google_api_key=GEMINI_API_KEY)
 
 ######-------------Resume Polish-------------######
 
@@ -71,9 +76,7 @@ def resume_polish(position, polish_prompt, content):
         "polish_prompt": polish_prompt,
         "position_name": position
     })
-    if isinstance(result.content, list):
-        return result.content[0].get("text", "")
-    return result.content
+    return response_text(result.content)
 
 
 ######-------------Cover Letter-------------######
@@ -97,7 +100,7 @@ def cover_letter(company, position, description, content=""):
     targeted_context = query_relevant_experience(description)
 
     # 2. Fallback to manually pasted content if the database is empty
-    final_context = targeted_context if targeted_context and "No resume data found" not in targeted_context else content
+    final_context = choose_context(targeted_context, content)
 
     result = prompt_to_Gemini1.invoke({
         "company_name": company,
@@ -105,9 +108,7 @@ def cover_letter(company, position, description, content=""):
         "job_description": description,
         "resume_content": final_context,
     })
-    if isinstance(result.content, list):
-        return result.content[0].get("text", "")
-    return result.content
+    return response_text(result.content)
 
 
 ######-------------Career Coach-------------######
@@ -130,13 +131,11 @@ def career_coach(description, content="", position=""):
     targeted_context = query_relevant_experience(description)
 
     # 2. Fallback to manually pasted content if the database is empty
-    final_context = targeted_context if targeted_context and "No resume data found" not in targeted_context else content
+    final_context = choose_context(targeted_context, content)
 
     result = prompt_to_Gemini2.invoke({
         "job_description": description,
         "resume_content": final_context,
         "position_applied": position,
     })
-    if isinstance(result.content, list):
-        return result.content[0].get("text", "")
-    return result.content
+    return response_text(result.content)

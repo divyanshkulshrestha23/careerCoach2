@@ -5,7 +5,7 @@ gradio==4.*
 google-genai
 langchain-core
 langchain-google-genai
-dotenv
+python-dotenv
 
 # --- Computer Vision & OCR ---
 torch
