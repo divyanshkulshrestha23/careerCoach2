@@ -21,6 +21,8 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
 
 ## Quick Start Installation
 
+Requires Python 3. The first run downloads models from the internet (the YOLO layout model from Hugging Face, and ChromaDB's embedding model), so it will be slow and needs a connection.
+
 1. **Clone the repository:**
    `git clone https://github.com/divyanshkulshrestha23/careerCoach2.git`
 2. **Install system dependencies:**
@@ -35,6 +37,8 @@ This application utilizes a hybrid local/cloud architecture to minimize latency 
    Optional: `GEMINI_MODEL`, `TESSERACT_CMD`, `POPPLER_PATH`.
 5. **Run the application:**
    `python app.py`
+
+The **Resume Match** tab works without a Gemini key, since it runs locally. The other tabs need `GEMINI_API_KEY`.
 
 ## Usage
 
